@@ -97,6 +97,7 @@ def worldbankdata(world_bank, indicator):
 
 world_bank_year, world_bank_country = worldbankdata(world_bank, 'Population, total')
 
+
  # Loop over the selected indicators
 for ind in selected_indicators:
     
@@ -111,131 +112,244 @@ for ind in selected_indicators:
     plt.title(ind)
     plt.xlabel('2001-2021')
     
+    
     #Show plot
     plt.show()
     
 
-    
+
+
+# Loop over the selected indicators   
 for ind in selected_indicators:
+    
+    
+    # Get the data for the current indicator
     world_bank_year, world_bank_country = worldbankdata(world_bank, ind)
+    
+    # Loop over the countries and plot the data for each one
     for i in countries:
         plt.plot(world_bank_country[i], label=i)
-
+        
+    # Add a title, legend, axis labels, and tick rotation to the plot
     plt.title(ind)
     plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
     plt.xticks(rotation=90)
+    
+    
+    # Show the plot
     plt.show()
 
+# Loop over the selected indicators
 for i in selected_indicators:
+    
+    
+    # Select the data for the current indicator and merge it with the country information dataframe
     temp_world_bank = world_bank[world_bank['Indicator Name'] == i]
     temp_world_bank = temp_world_bank.merge(dfc1,left_on='Country Name', right_on='TableName')
+    
+    # Compute the mean value of the indicator for each region and plot a bar chart
     temp_world_bank.groupby(['Region'])['mean'].mean().sort_values(ascending=False).plot(kind='bar')
+    
+    #Add title
     plt.title(i)
+    
+    
+    #Show plot
     plt.show()
 
 
-
+# Get the data for the 'Arable land (% of land area)' and 'Forest area (% of land area)' indicators
 world_bank_1, world_bank_2 = (world_bank, 'Arable land (% of land area)')
-world_bank_3, world_bank_4 = world_bank_data(world_bank, 'Forest area (% of land area)')
+world_bank_3, world_bank_4 = worldbankdata(world_bank, 'Forest area (% of land area)')
 
+# Compute the mean values of the indicators for each country and merge them into a single dataframe
 world_bank_1_mean = world_bank_1.mean(axis=1).reset_index().rename({0:'arable land'}, axis=1)
 world_bank_3_mean = world_bank_3.mean(axis=1).reset_index().rename({0:'forest land'}, axis=1)
+n_world_bank = world_bank_1_mean.merge(world_bank_3_mean, on='Country Name')
 
-n_world_bank = world_bank_1_mean.merge(df3_mean, on='Country Name')
 
+# Plot a scatter plot of arable land vs. forest land
 plt.figure(figsize=(4,3))
 sns.scatterplot(x=n_world_bank['arable land'], y=n_world_bank['forest land'])
+
+
+# Add axis labels and a title to the plot
 plt.xlabel('Arable Land')
 plt.ylabel('Forest Land')
 plt.title('Arable vs Forest Land')
+
+
+# Show the plot
 plt.show()
 
+
+
+# Get the data for the 'Arable land (% of land area)' and 'Forest area (% of land area)' indicators
+# Set the index of the dataframe to 'Country Name'
 n_world_bank.index = n_world_bank.loc[:, 'Country Name']
+
+
+
+# Create a bar chart of the top 10 countries with the highest arable land percentage
 n_world_bank.sort_values(by='arable land', ascending=False)[:10].plot(kind='bar',figsize=(4,3))
+
+
+# Add axis labels and a title to the plot
 plt.ylabel('frequency')
 plt.title('Top 10 Countries with Max Arable Land')
+
+
+# Show the plot
 plt.show()
 
+
+# Create a bar chart of the top 10 countries with the highest forest land percentage
 n_world_bank.sort_values(by='forest land', ascending=False)[:10].plot(kind='bar',figsize=(4,3))
+
+# Add axis labels and a title to the plot
 plt.ylabel('frequency')
 plt.title('Top 10 Countries with Max Forest Land')
+
+
+#Show the plot
 plt.show()
 
 
-
+# Get the data for the 'Access to electricity (% of population)' and 'Electric power consumption (kWh per capita)' indicators
 world_bank_1, world_bank_2 = worldbankdata(world_bank, 'Access to electricity (% of population)')
 world_bank_3, world_bank_4 = worldbankdata(world_bank, 'Electric power consumption (kWh per capita)')
 
+
+# Compute the mean values of the indicators for each country and merge them into a single dataframe
 world_bank_1_mean = world_bank_1.mean(axis=1).reset_index().rename({0:'Access to Electricity'}, axis=1)
 world_bank_3_mean = world_bank_3.mean(axis=1).reset_index().rename({0:'Electric Power Consumption'}, axis=1)
-
 n_world_bank = world_bank_1_mean.merge(world_bank_3_mean, on='Country Name')
 
+
+# Plot a scatter plot of access to electricity vs. electric power consumption
 plt.figure(figsize=(4,3))
 sns.scatterplot(x=n_world_bank['Access to Electricity'], y=n_world_bank['Electric Power Consumption'])
+
+
+# Add axis labels and a title to the plot
 plt.xlabel('Access to Electricity')
 plt.ylabel('Electric Power Consumption')
 plt.title('Access to Electricity vs Electric Power Consumption')
+
+
+# Show the plot
 plt.show()
 
+
+# Set the index of the dataframe to 'Country Name
 n_world_bank.index = n_world_bank.loc[:, 'Country Name']
+
+
+# Create a bar chart of the top 10 countries with the highest access to electricity percentage
 n_world_bank.sort_values(by='Access to Electricity', ascending=False)[:10].plot(kind='bar',figsize=(4,3))
+
+
+# Add axis labels and a title to the plot
 plt.ylabel('frequency')
 plt.title('Top 10 Countries with Max Access to Electricity')
+
+
+# SHow the plot
 plt.show()
 
+
+# Create a bar chart of the top 10 countries with the highest electric power consumption per capita
 n_world_bank.sort_values(by='Electric Power Consumption', ascending=False)[:10].plot(kind='bar',figsize=(4,3))
+
+
+# Add axis labels and a title to the plot
 plt.ylabel('frequency')
 plt.title('Top 10 Countries with Max Electric Power Consumption')
+
+
+# Show the plot
 plt.show()
 
 
-
+# Get the data for the 'Energy use (kg of oil equivalent) per $1,000 GDP 
+# (constant 2017 PPP)' and 'CO2 emissions (kt)' indicators
 world_bank_1, world_bank_2 = worldbankdata(world_bank, 'Energy use (kg of oil equivalent) per $1,000 GDP (constant 2017 PPP)')
 world_bank_3, world_bank_4 = worldbankdata(world_bank, 'CO2 emissions (kt)')
 
+
+# Create a scatter plot of energy use vs. CO2 emissions
 sns.scatterplot(x=world_bank_1.mean(axis=1), y=world_bank_3.mean(axis=1))
+
+# Add axis labels and a title to the plot
 plt.xlabel('Energy use (kg of oil equivalent) per $1,000 GDP (constant 2017 PPP)')
 plt.ylabel('CO2 emissions')
 plt.title('Energy use vs CO2 emissions')
+
+
+# Show the plot 
 plt.show()
 
 
-
+# Compute the mean value of each indicator for each country, and reshape the data into a pivot table
 world_bank_1 = world_bank.groupby(['Country Name','Indicator Name'])['mean'].mean().unstack()
 
+
+# Create a heatmap of the correlation matrix for the selected indicators
 plt.figure(figsize=(10,7))
 sns.heatmap(world_bank_1[selected_indicators].corr(), cmap='viridis', linewidths=.5, annot=True)
 
 
-# Correlation Graph for select Countries using Urban Population Indicator
+# Display the heatmap
+plt.show()
+
+
+# Get the data for the 'Urban population' indicator
 world_bank_year, world_bank_country = worldbankdata(world_bank, 'Urban population')
 
+
+# Create a heatmap of the correlation matrix for the selected countries
 plt.figure(figsize=(10,7))
 sns.heatmap(world_bank_country[countries].corr(), cmap='viridis', linewidths=.5, annot=True)
 
 
-# ## Correlation Graph of Countries with the indicator of Arable Land
+# Show the heatmap
+plt.show()
 
+
+# Retrieve the data for the 'Arable land (% of land area)' indicator
 world_bank_year, world_bank_country = worldbankdata(world_bank, 'Arable land (% of land area)')
 
+
+# Create a heatmap of the correlation matrix for the selected countries
 plt.figure(figsize=(10,7))
 sns.heatmap(world_bank_country[countries].corr(), cmap='viridis', linewidths=.5, annot=True)
 
 
-# ## Correlation Graph of Countries for "Electric Power Consumption" Indicator
+# Display the heatmap
+plt.show()
 
 
+# Retrieve the data for the 'Electric power consumption (kWh per capita)' indicator
 world_bank_year, world_bank_country = worldbankdata(world_bank, 'Electric power consumption (kWh per capita)')
 
+
+# Create a heatmap of the correlation matrix for the selected countries
 plt.figure(figsize=(10,7))
 sns.heatmap(world_bank_country[countries].corr(), cmap='viridis', linewidths=.5, annot=True)
 
-#To find the description of the dataframe, using .describe() method
-print(world_bank_1[selected_indicators].describe())
 
-#To find the skewness, using stats module from scipy
-print(('Skewness:', stats.skew(world_bank))
+# Display the heatmap
+plt.show()
 
-#To find the standard deviation in the distribution 
-print(world_bank2.std())
+
+# Retrieve the data for the selected indicators and display a summary of the data using the .describe() method
+world_bank_summary = world_bank_1[selected_indicators].describe()
+print(world_bank_summary)
+
+# Compute the skewness of the data using the stats module from scipy and display the result
+skewness = stats.skew(world_bank)
+print(('Skewness:', skewness))
+
+# Compute the standard deviation of the data in world_bank2 and display the result
+standard_deviation = world_bank2.std()
+print(standard_deviation)
